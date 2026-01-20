@@ -5,14 +5,15 @@ import {
   createContext,
   ReactNode,
   use,
-  useContext
+  useContext,
 } from 'react';
 
-const UserContext = createContext<User | null>(null);
+const UserContext = createContext<User | null | undefined>(undefined);
 
 export function useUser() {
   const context = useContext(UserContext);
-  if (context === null) {
+  // `null` is a valid value (logged out). `undefined` means no provider.
+  if (context === undefined) {
     throw new Error('useUser must be used within a UserProvider');
   }
   return context;

@@ -5,9 +5,21 @@ import { cache } from 'react';
 import 'server-only';
 
 const secretKey = process.env.SESSION_SECRET;
-const encodedKey = new TextEncoder().encode(secretKey);
+const encodedKey = secretKey ? new TextEncoder().encode(secretKey) : null;
+
+function requireEncodedKey() {
+  if (!encodedKey) {
+    throw new Error(
+      'SESSION_SECRET is not set. Create a .env.local with SESSION_SECRET (see .env.local.example).'
+    );
+  }
+  return encodedKey;
+}
 
 export const verifySession = cache(async () => {
+  // Avoid crashing on import/build when env isn't configured.
+  if (!encodedKey) return { isAuth: false as const };
+
   const cookieStore = await cookies();
   const cookie = cookieStore.get('session')?.value;
   const session = await decrypt(cookie);
@@ -24,12 +36,14 @@ export async function encrypt(payload: SessionPayload) {
     .setProtectedHeader({ alg: 'HS256' })
     .setIssuedAt()
     .setExpirationTime('1d')
-    .sign(encodedKey);
+    .sign(requireEncodedKey());
 }
 
 export async function decrypt(session: string | undefined = '') {
   try {
-    const { payload } = await jwtVerify(session, encodedKey, {
+    if (!encodedKey) return null;
+
+    const { payload } = await jwtVerify(session, requireEncodedKey(), {
       algorithms: ['HS256'],
     });
     return payload;

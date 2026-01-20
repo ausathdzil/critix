@@ -13,6 +13,7 @@ import {
 import { Textarea } from '@/components/ui/textarea';
 import { updateMovieReview } from '@/lib/actions/movie';
 import { ArrowLeft, Loader2, NotebookPen } from 'lucide-react';
+import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { startTransition, useActionState } from 'react';
 
@@ -26,7 +27,7 @@ export default function EditReviewForm({
   content: string;
 }) {
   const user = useUser();
-  const updateMovieReviewWithId = updateMovieReview.bind(null, user.id);
+  const updateMovieReviewWithId = updateMovieReview.bind(null, user?.id ?? '');
 
   const [state, action, pending] = useActionState(
     updateMovieReviewWithId,
@@ -43,6 +44,19 @@ export default function EditReviewForm({
   return (
     <form className="space-y-4" onSubmit={handleSubmit}>
       <input type="hidden" name="reviewId" value={reviewId} />
+
+      {!user && (
+        <div>
+          <p className="text-sm text-muted-foreground">
+            You must be logged in to edit a review.
+          </p>
+          <Link href="/login">
+            <Button className="mt-3" type="button">
+              Go to login
+            </Button>
+          </Link>
+        </div>
+      )}
 
       <div className="space-y-1">
         <Label htmlFor="rating">Rating</Label>
@@ -87,7 +101,7 @@ export default function EditReviewForm({
           <ArrowLeft />
           <span>Cancel</span>
         </Button>
-        <Button type="submit" disabled={pending}>
+        <Button type="submit" disabled={pending || !user}>
           {pending ? <Loader2 className="animate-spin" /> : <NotebookPen />}
           <span>Submit</span>
         </Button>

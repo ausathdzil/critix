@@ -108,6 +108,12 @@ export async function updateProfile(
   state: UpdateProfileFormState,
   formData: FormData
 ) {
+  if (!userId) {
+    return {
+      message: 'You must be logged in to update your profile.',
+    };
+  }
+
   const validatedFields = UpdateProfileFormSchema.safeParse({
     name: formData.get('name'),
     email: formData.get('email'),
@@ -152,6 +158,12 @@ export async function updatePassword(
   state: UpdatePasswordFormState,
   formData: FormData
 ) {
+  if (!userId) {
+    return {
+      message: 'You must be logged in to update your password.',
+    };
+  }
+
   const validatedFields = UpdatePasswordFormSchema.safeParse({
     currentPassword: formData.get('currentPassword'),
     newPassword: formData.get('newPassword'),

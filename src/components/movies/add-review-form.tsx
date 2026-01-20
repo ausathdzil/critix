@@ -13,11 +13,12 @@ import {
 import { Textarea } from '@/components/ui/textarea';
 import { createMovieReview } from '@/lib/actions/movie';
 import { Loader2, NotebookPen } from 'lucide-react';
+import Link from 'next/link';
 import { startTransition, useActionState } from 'react';
 
 export default function AddReviewForm({ movieId }: { movieId: number }) {
   const user = useUser();
-  const createMovieReviewWithId = createMovieReview.bind(null, user.id);
+  const createMovieReviewWithId = createMovieReview.bind(null, user?.id ?? '');
 
   const [state, action, pending] = useActionState(
     createMovieReviewWithId,
@@ -32,6 +33,19 @@ export default function AddReviewForm({ movieId }: { movieId: number }) {
   return (
     <form className="space-y-4 lg:w-1/2" onSubmit={handleSubmit}>
       <h1 className="text-lg font-bold font-serif">Write your review</h1>
+
+      {!user && (
+        <div>
+          <p className="text-sm text-muted-foreground">
+            You must be logged in to write a review.
+          </p>
+          <Link href="/login">
+            <Button className="mt-3" type="button">
+              Go to login
+            </Button>
+          </Link>
+        </div>
+      )}
 
       <input type="hidden" name="movieId" value={movieId} />
 
@@ -73,7 +87,7 @@ export default function AddReviewForm({ movieId }: { movieId: number }) {
       {state?.message && <p className="text-primary">{state.message}</p>}
 
       <div className="flex justify-end">
-        <Button type="submit" disabled={pending}>
+        <Button type="submit" disabled={pending || !user}>
           {pending ? <Loader2 className="animate-spin" /> : <NotebookPen />}
           <span>Submit</span>
         </Button>

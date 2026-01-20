@@ -62,6 +62,12 @@ export async function updateMovieReview(
   state: UpdateMovieReviewFormState,
   formData: FormData
 ) {
+  if (!userId) {
+    return {
+      message: 'You must be logged in to update a review.',
+    };
+  }
+
   const validatedFields = UpdateMovieReviewFormSchema.safeParse({
     reviewId: formData.get('reviewId'),
     rating: Number(formData.get('rating')),
@@ -93,6 +99,8 @@ export async function updateMovieReview(
 }
 
 export async function deleteMovieReview(userId: string, reviewId: string) {
+  if (!userId) return;
+
   try {
     await db
       .delete(reviews)
