@@ -6,10 +6,23 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { updateProfile } from '@/lib/actions/auth';
 import { Loader2, Save } from 'lucide-react';
+import Link from 'next/link';
 import { startTransition, useActionState } from 'react';
 
 export default function UpdateProfileForm() {
   const user = useUser();
+  if (!user) {
+    return (
+      <div>
+        <p className="text-sm text-muted-foreground">
+          You must be logged in to update your profile.
+        </p>
+        <Link href="/login">
+          <Button className="mt-3">Go to login</Button>
+        </Link>
+      </div>
+    );
+  }
   const updateProfileWithId = updateProfile.bind(null, user.id);
 
   const [state, action, pending] = useActionState(

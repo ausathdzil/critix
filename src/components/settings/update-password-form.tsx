@@ -6,10 +6,23 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { updatePassword } from '@/lib/actions/auth';
 import { Eye, EyeOff, Loader2, Lock } from 'lucide-react';
+import Link from 'next/link';
 import { startTransition, useActionState, useState } from 'react';
 
 export default function UpdatePasswordForm() {
   const user = useUser();
+  if (!user) {
+    return (
+      <div>
+        <p className="text-sm text-muted-foreground">
+          You must be logged in to update your password.
+        </p>
+        <Link href="/login">
+          <Button className="mt-3">Go to login</Button>
+        </Link>
+      </div>
+    );
+  }
   const updatePasswordWithId = updatePassword.bind(null, user.id);
 
   const [state, action, pending] = useActionState(

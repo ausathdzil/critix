@@ -13,6 +13,7 @@ import {
 import { Textarea } from '@/components/ui/textarea';
 import { updateMovieReview } from '@/lib/actions/movie';
 import { ArrowLeft, Loader2, NotebookPen } from 'lucide-react';
+import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { startTransition, useActionState } from 'react';
 
@@ -26,6 +27,18 @@ export default function EditReviewForm({
   content: string;
 }) {
   const user = useUser();
+  if (!user) {
+    return (
+      <div>
+        <p className="text-sm text-muted-foreground">
+          You must be logged in to edit a review.
+        </p>
+        <Link href="/login">
+          <Button className="mt-3">Go to login</Button>
+        </Link>
+      </div>
+    );
+  }
   const updateMovieReviewWithId = updateMovieReview.bind(null, user.id);
 
   const [state, action, pending] = useActionState(

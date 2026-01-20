@@ -13,10 +13,23 @@ import {
 import { Textarea } from '@/components/ui/textarea';
 import { createMovieReview } from '@/lib/actions/movie';
 import { Loader2, NotebookPen } from 'lucide-react';
+import Link from 'next/link';
 import { startTransition, useActionState } from 'react';
 
 export default function AddReviewForm({ movieId }: { movieId: number }) {
   const user = useUser();
+  if (!user) {
+    return (
+      <div className="lg:w-1/2">
+        <p className="text-sm text-muted-foreground">
+          You must be logged in to write a review.
+        </p>
+        <Link href="/login">
+          <Button className="mt-3">Go to login</Button>
+        </Link>
+      </div>
+    );
+  }
   const createMovieReviewWithId = createMovieReview.bind(null, user.id);
 
   const [state, action, pending] = useActionState(
