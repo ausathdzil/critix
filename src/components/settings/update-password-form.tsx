@@ -11,19 +11,7 @@ import { startTransition, useActionState, useState } from 'react';
 
 export default function UpdatePasswordForm() {
   const user = useUser();
-  if (!user) {
-    return (
-      <div>
-        <p className="text-sm text-muted-foreground">
-          You must be logged in to update your password.
-        </p>
-        <Link href="/login">
-          <Button className="mt-3">Go to login</Button>
-        </Link>
-      </div>
-    );
-  }
-  const updatePasswordWithId = updatePassword.bind(null, user.id);
+  const updatePasswordWithId = updatePassword.bind(null, user?.id ?? '');
 
   const [state, action, pending] = useActionState(
     updatePasswordWithId,
@@ -43,6 +31,19 @@ export default function UpdatePasswordForm() {
 
   return (
     <form className="space-y-4" onSubmit={handleSubmit}>
+      {!user && (
+        <div>
+          <p className="text-sm text-muted-foreground">
+            You must be logged in to update your password.
+          </p>
+          <Link href="/login">
+            <Button className="mt-3" type="button">
+              Go to login
+            </Button>
+          </Link>
+        </div>
+      )}
+
       <div className="space-y-1">
         <Label htmlFor="currentPassword">Current password</Label>
         <div className="relative">
@@ -114,7 +115,7 @@ export default function UpdatePasswordForm() {
         )}
       </div>
 
-      <Button type="submit" disabled={pending}>
+      <Button type="submit" disabled={pending || !user}>
         {pending ? <Loader2 className="animate-spin" /> : <Lock />}
         <span>Save changes</span>
       </Button>
