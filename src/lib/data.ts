@@ -1,14 +1,9 @@
-'use cache';
-
 import { Movie, MovieResult, MovieSearchParams } from '@/lib/definitions/movie';
-import { unstable_cacheLife as cacheLife } from 'next/cache';
 
 export async function searchMovies(
   searchParams: MovieSearchParams
 ): Promise<MovieResult | null> {
   const query = new URLSearchParams();
-  
-  cacheLife('days');
 
   if (searchParams.query) {
     query.append('query', searchParams.query);
@@ -26,6 +21,8 @@ export async function searchMovies(
           accept: 'application/json',
           Authorization: `Bearer ${process.env.NEXT_PUBLIC_TMDB_API_KEY}`,
         },
+        // Cache on the server and revalidate daily.
+        next: { revalidate: 60 * 60 * 24 },
       }
     );
     const data = await res.json();
@@ -36,14 +33,13 @@ export async function searchMovies(
 }
 
 export async function discoverMovies(): Promise<MovieResult | null> {
-  cacheLife('days');
-
   try {
     const res = await fetch(`https://api.themoviedb.org/3/discover/movie`, {
       headers: {
         accept: 'application/json',
         Authorization: `Bearer ${process.env.NEXT_PUBLIC_TMDB_API_KEY}`,
       },
+      next: { revalidate: 60 * 60 * 24 },
     });
     const data = await res.json();
     return data;
@@ -53,14 +49,13 @@ export async function discoverMovies(): Promise<MovieResult | null> {
 }
 
 export async function getMovie(id: number): Promise<Movie | null> {
-  cacheLife('days');
-
   try {
     const res = await fetch(`https://api.themoviedb.org/3/movie/${id}`, {
       headers: {
         accept: 'application/json',
         Authorization: `Bearer ${process.env.NEXT_PUBLIC_TMDB_API_KEY}`,
       },
+      next: { revalidate: 60 * 60 * 24 },
     });
     const data = await res.json();
     return data;
@@ -70,14 +65,13 @@ export async function getMovie(id: number): Promise<Movie | null> {
 }
 
 export async function getNowPlayingMovies(): Promise<Movie[] | null> {
-  cacheLife('days');
-
   try {
     const res = await fetch(`https://api.themoviedb.org/3/movie/now_playing`, {
       headers: {
         accept: 'application/json',
         Authorization: `Bearer ${process.env.NEXT_PUBLIC_TMDB_API_KEY}`,
       },
+      next: { revalidate: 60 * 60 * 24 },
     });
     const data = await res.json();
     return data.results;
@@ -87,14 +81,13 @@ export async function getNowPlayingMovies(): Promise<Movie[] | null> {
 }
 
 export async function getPopularMovies(): Promise<Movie[] | null> {
-  cacheLife('days');
-  
   try {
     const res = await fetch(`https://api.themoviedb.org/3/movie/popular`, {
       headers: {
         accept: 'application/json',
         Authorization: `Bearer ${process.env.NEXT_PUBLIC_TMDB_API_KEY}`,
       },
+      next: { revalidate: 60 * 60 * 24 },
     });
     const data = await res.json();
     return data.results;
@@ -104,14 +97,13 @@ export async function getPopularMovies(): Promise<Movie[] | null> {
 }
 
 export async function getTopRatedMovies(): Promise<Movie[] | null> {
-  cacheLife('days');
-
   try {
     const res = await fetch(`https://api.themoviedb.org/3/movie/top_rated`, {
       headers: {
         accept: 'application/json',
         Authorization: `Bearer ${process.env.NEXT_PUBLIC_TMDB_API_KEY}`,
       },
+      next: { revalidate: 60 * 60 * 24 },
     });
     const data = await res.json();
     return data.results;
@@ -121,14 +113,13 @@ export async function getTopRatedMovies(): Promise<Movie[] | null> {
 }
 
 export async function getUpcomingMovies(): Promise<Movie[] | null> {
-  cacheLife('days');
-
   try {
     const res = await fetch(`https://api.themoviedb.org/3/movie/upcoming`, {
       headers: {
         accept: 'application/json',
         Authorization: `Bearer ${process.env.NEXT_PUBLIC_TMDB_API_KEY}`,
       },
+      next: { revalidate: 60 * 60 * 24 },
     });
     const data = await res.json();
     return data.results;

@@ -27,8 +27,6 @@ export const metadata: Metadata = {
   description: 'A movie review website',
 };
 
-export const experimental_ppr = true;
-
 export default function RootLayout({
   children,
 }: Readonly<{
