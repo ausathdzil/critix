@@ -58,13 +58,13 @@ function SearchForm() {
 
 async function HomeMovies() {
   const data = await discoverMovies();
-  const movies = data?.results.slice(0, 6);
+  const movies = data?.results?.slice(0, 6) ?? [];
 
   return (
     <section className="space-y-8 pb-8 px-0">
       <ul className="grid sm:grid-cols-2 lg:grid-cols-3 gap-8">
         <Suspense fallback={<div>Loading...</div>}>
-          {movies?.map((movie) => (
+          {movies.map((movie) => (
             <li key={movie.id}>
               <Link
                 className="max-w-[300px] text-center space-y-2"
