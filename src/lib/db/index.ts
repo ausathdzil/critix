@@ -26,6 +26,6 @@ function getDb(): DB {
 // Lazy proxy so importing this module doesn't require env vars at build time.
 export const db: DB = new Proxy({} as DB, {
   get(_target, prop) {
-    return (getDb() as any)[prop];
+    return (getDb() as unknown as Record<PropertyKey, unknown>)[prop];
   },
 }) as DB;
